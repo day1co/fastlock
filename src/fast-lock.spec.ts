@@ -57,19 +57,24 @@ describe('FastLock', () => {
         await locker.lock(lockKey, 4000);
         const test = 'test' + Math.random();
         const testFunction = async () => {
-          await locker2.lock(lockKey, 1000);
-          testArray.push('bar2');
-          testArray.push('foo2');
-          await locker2.unlock();
+          try {
+            await locker2.lock(lockKey, 2000);
+            testArray.push('bar2');
+            testArray.push('foo2');
+            await locker2.unlock();
+          } catch (err) {
+            debug(err);
+          }
         };
         testArray.push('bar');
         testArray.push('foo');
-        setTimeout(() => testFunction(), 1000);
+        setTimeout(() => testFunction(), 500);
         await sleep(3000);
         await locker.unlock();
-        debug('should work', testArray);
       } catch (err) {
         debug(err);
+      } finally {
+        debug('locked', testArray);
         expect(testArray).toEqual(['bar', 'foo']);
       }
     });
