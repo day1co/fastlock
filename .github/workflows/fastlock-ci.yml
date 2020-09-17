@@ -1,0 +1,40 @@
+name: FastLock CI
+
+on:
+  push:
+    branches:
+      - feature/*
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+    services:
+      redis:
+        image: redis
+        ports:
+        - 6379:6379
+        options: --entrypoint redis-server
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Bootstrap
+        run: |
+          npm i 
+      - name: Begin Test
+        run: |
+          npm run ci:test
+        env:
+          NODE_ENV: test
+          CI: true
