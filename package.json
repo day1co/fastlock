@@ -1,6 +1,6 @@
 {
   "name": "@fastcampus/fastlock",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "fast and simple distributed lock using redis",
   "url": "https://github.com/fastcampusgit/fastlock",
   "repository": {
