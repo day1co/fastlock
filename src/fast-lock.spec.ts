@@ -6,9 +6,16 @@ const debug = Debug('fastlock:test');
 const sleep = async (ms) => new Promise((res) => setTimeout(res, ms));
 const createLocker = () => {
   const redisConfig = { host: 'localhost', port: 6379, db: 0 };
+  const redlockConfig = {
+    driftFactor: 0.01, // time in ms
+    retryCount: 1,
+    retryDelay: 200, // time in ms
+    retryJitter: 200, // time in ms
+  };
   return FastLock.create({
     redis: redisConfig,
     createRedisClient: redis.createClient,
+    redlock: redlockConfig,
   });
 };
 const lockKey = 'locks:hello-lock';
