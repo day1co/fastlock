@@ -2,10 +2,10 @@
   "name": "@fastcampus/fastlock",
   "version": "0.0.2",
   "description": "fast and simple distributed lock using redis",
-  "url": "https://github.com/fastcampusgit/fastlock",
+  "url": "https://github.com/fastcampus/fastlock",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fastcampusgit/fastlock.git"
+    "url": "git+https://github.com/fastcampus/fastlock.git"
   },
   "license": "MIT",
   "main": "dist/index.js",
@@ -38,9 +38,9 @@
     "redlock": "^4.1.0"
   },
   "bugs": {
-    "url": "https://github.com/fastcampusgit/fastlock/issues"
+    "url": "https://github.com/fastcampus/fastlock/issues"
   },
-  "homepage": "https://github.com/fastcampusgit/fastlock#readme",
+  "homepage": "https://github.com/fastcampus/fastlock#readme",
   "directories": {
     "example": "example"
   },
