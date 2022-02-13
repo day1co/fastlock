@@ -22,18 +22,14 @@ export class FastLock {
   private locker: any;
 
   private constructor(opts?: FastLockOpts) {
-    this.init(opts);
-  }
-
-  public init(opts: FastLockOpts) {
-    const createRedisClient = opts.createRedisClient || createClient;
-    this.client = createRedisClient(opts.redis);
-    debug(`connect redis: ${opts.redis.host}:${opts.redis.port}/${opts.redis.db}`);
+    const createRedisClient = opts?.createRedisClient || createClient;
+    this.client = createRedisClient(opts?.redis);
+    debug(`connect redis: ${opts?.redis?.host}:${opts?.redis?.port}/${opts?.redis?.db}`);
 
     this.redlock = new Redlock(
       [this.client],
-      opts.redlock
-        ? opts.redlock
+      opts?.redlock
+        ? opts?.redlock
         : {
             // the expected clock drift; for more details
             // see http://redis.io/topics/distlock

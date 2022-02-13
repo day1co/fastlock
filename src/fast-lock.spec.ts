@@ -38,7 +38,7 @@ describe('FastLock', () => {
       try {
         await locker.lock(lockKey, 2000);
         const test = 'test' + Math.random();
-        const testArray = [];
+        const testArray: string[] = [];
         const testFunction = async () => {
           await locker2.lock(lockKey, 1000);
           testArray.push('bar2');
@@ -59,7 +59,7 @@ describe('FastLock', () => {
     });
 
     test('locked', async () => {
-      const testArray = [];
+      const testArray: string[] = [];
       try {
         await locker.lock(lockKey, 4000);
         const test = 'test' + Math.random();
