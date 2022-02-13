@@ -2,7 +2,7 @@
 
 fast and simple distributed lock using redis
 
-[![npm version](https://badge.fury.io/js/%40fastcampus%2Ffastcache.svg)](https://badge.fury.io/js/%40fastcampus%2Ffastlock)
+![version](https://img.shields.io/github/package-json/v/day1co/fastlock)
 
 ## Getting Started
 
