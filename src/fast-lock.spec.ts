@@ -1,5 +1,5 @@
 import Debug from 'debug';
-import redis from 'redis';
+import Redis from 'ioredis-mock';
 import { FastLock } from './fast-lock';
 
 const debug = Debug('fastlock:test');
@@ -14,7 +14,7 @@ const createLocker = () => {
   };
   return FastLock.create({
     redis: redisConfig,
-    createRedisClient: redis.createClient,
+    createRedisClient: () => new Redis(),
     redlock: redlockConfig,
   });
 };

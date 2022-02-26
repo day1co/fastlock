@@ -1,15 +1,21 @@
 import Debug from 'debug';
-import { ClientOpts, RedisClient, createClient } from 'redis';
-import { promisify } from 'util';
-import { createHash } from 'crypto';
-import Redlock from 'redlock';
+import { Redis, RedisOptions } from 'ioredis';
+import IORedis from 'ioredis';
+import Redlock, { Lock } from 'redlock';
 
 const debug = Debug('fastlock');
 
+export type RedlockConfig = {
+  driftFactor: number;
+  retryCount: number;
+  retryDelay: number;
+  retryJitter: number;
+};
+
 type FastLockOpts = {
-  redis?: ClientOpts;
-  createRedisClient?: (ClientOpts) => RedisClient;
-  redlock?: any;
+  redis?: RedisOptions;
+  createRedisClient?: (RedisOptions?) => Redis;
+  redlock?: RedlockConfig;
 };
 
 export class FastLock {
@@ -17,13 +23,11 @@ export class FastLock {
     return new FastLock(opts);
   }
 
-  private client: any;
-  private redlock: any;
-  private locker: any;
-
+  private client: Redis;
+  private redlock: Redlock;
+  private locker!: Redlock.Lock;
   private constructor(opts?: FastLockOpts) {
-    const createRedisClient = opts?.createRedisClient || createClient;
-    this.client = createRedisClient(opts?.redis);
+    this.client = opts?.createRedisClient ? opts?.createRedisClient(opts?.redis) : new IORedis(opts?.redis);
     debug(`connect redis: ${opts?.redis?.host}:${opts?.redis?.port}/${opts?.redis?.db}`);
 
     this.redlock = new Redlock(
@@ -55,7 +59,7 @@ export class FastLock {
 
   public destroy() {
     debug('destroy');
-    this.client.end(true);
+    this.client.disconnect();
   }
 
   //--------------------------------------------------------
