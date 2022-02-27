@@ -1,15 +1,14 @@
 import Debug from 'debug';
-import { ClientOpts, RedisClient, createClient } from 'redis';
-import { promisify } from 'util';
-import { createHash } from 'crypto';
-import Redlock from 'redlock';
+import { Redis, RedisOptions } from 'ioredis';
+import IORedis from 'ioredis';
+import { createLock, Lock, Config } from '@microfleet/ioredis-lock';
 
 const debug = Debug('fastlock');
 
 type FastLockOpts = {
-  redis?: ClientOpts;
-  createRedisClient?: (ClientOpts) => RedisClient;
-  redlock?: any;
+  redis?: RedisOptions;
+  createRedisClient?: (RedisOptions?) => Redis;
+  redislock?: Config;
 };
 
 export class FastLock {
@@ -17,40 +16,19 @@ export class FastLock {
     return new FastLock(opts);
   }
 
-  private client: any;
-  private redlock: any;
-  private locker: any;
+  private client: Redis;
+  private redisLock?: Lock;
+  private redisLockConfig: Config;
 
   private constructor(opts?: FastLockOpts) {
-    const createRedisClient = opts?.createRedisClient || createClient;
-    this.client = createRedisClient(opts?.redis);
+    this.client = opts?.createRedisClient ? opts?.createRedisClient(opts?.redis) : new IORedis(opts?.redis);
     debug(`connect redis: ${opts?.redis?.host}:${opts?.redis?.port}/${opts?.redis?.db}`);
-
-    this.redlock = new Redlock(
-      [this.client],
-      opts?.redlock
-        ? opts?.redlock
-        : {
-            // the expected clock drift; for more details
-            // see http://redis.io/topics/distlock
-            driftFactor: 0.01, // time in ms
-
-            // the max number of times Redlock will attempt
-            // to lock a resource before erroring
-            retryCount: 10,
-
-            // the time in ms between attempts
-            retryDelay: 200, // time in ms
-
-            // the max time in ms randomly added to retries
-            // to improve performance under high contention
-            // see https://www.awsarchitectureblog.com/2015/03/backoff.html
-            retryJitter: 200, // time in ms
-          }
-    );
-    this.redlock.on('clientError', function (err: Error) {
-      debug('A redis error has occured:', err);
-    });
+    this.redisLockConfig = opts?.redislock ?? {
+      timeout: 2000,
+      retries: 10,
+      delay: 200, // time in ms
+      jitter: 200, // time in ms
+    };
   }
 
   public destroy() {
@@ -62,12 +40,13 @@ export class FastLock {
 
   public async lock(key: string, ttl: number = 2000): Promise<any> {
     debug('lock', key);
-    this.locker = await this.redlock.lock(key, ttl);
-    return this.locker;
+    // XXX: redlock과 달리 ioredis-lock은 ttl이 생성자 옵션임!
+    this.redisLock = createLock(this.client, { ...this.redisLockConfig, timeout: ttl });
+    return this.redisLock.acquire(key);
   }
 
   public async unlock(): Promise<Boolean> {
-    await this.locker.unlock();
+    await this.redisLock?.release();
     return true;
   }
 }
