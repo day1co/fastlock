@@ -1,10 +1,7 @@
-import Debug from 'debug';
 import { ClientOpts, RedisClient, createClient } from 'redis';
-import { promisify } from 'util';
-import { createHash } from 'crypto';
 import Redlock from 'redlock';
-
-const debug = Debug('fastlock');
+import { LoggerFactory } from '@day1co/pebbles';
+import type { Logger } from '@day1co/pebbles';
 
 type FastLockOpts = {
   redis?: ClientOpts;
@@ -20,11 +17,13 @@ export class FastLock {
   private client: any;
   private redlock: any;
   private locker: any;
+  private logger: Logger;
 
   private constructor(opts?: FastLockOpts) {
+    this.logger = LoggerFactory.getLogger('fastlock');
     const createRedisClient = opts?.createRedisClient || createClient;
     this.client = createRedisClient(opts?.redis);
-    debug(`connect redis: ${opts?.redis?.host}:${opts?.redis?.port}/${opts?.redis?.db}`);
+    this.logger.debug(`connect redis: ${opts?.redis?.host}:${opts?.redis?.port}/${opts?.redis?.db}`);
 
     this.redlock = new Redlock(
       [this.client],
@@ -49,19 +48,19 @@ export class FastLock {
           }
     );
     this.redlock.on('clientError', function (err: Error) {
-      debug('A redis error has occured:', err);
+      this.logger.error('A redis error has occured: %o', err);
     });
   }
 
   public destroy() {
-    debug('destroy');
+    this.logger.debug('destroy');
     this.client.end(true);
   }
 
   //--------------------------------------------------------
 
   public async lock(key: string, ttl: number = 2000): Promise<any> {
-    debug('lock', key);
+    this.logger.debug('lock: %o', key);
     this.locker = await this.redlock.lock(key, ttl);
     return this.locker;
   }

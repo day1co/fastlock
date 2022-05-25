@@ -1,7 +1,7 @@
-import Debug from 'debug';
+import { LoggerFactory } from '@day1co/pebbles';
 import { FastLock } from '../src/fast-lock';
 
-const debug = Debug('fastlock:example');
+const logger = LoggerFactory.getLogger('fastlock:example');
 const sleep = async (ms) => new Promise((res) => setTimeout(res, ms));
 
 const myArray = [];
@@ -24,7 +24,7 @@ const main = async () => {
   await sleep(2000);
   await locker.unlock();
   locker.destroy();
-  debug(myArray);
+  logger.debug('%o', myArray);
 };
 
 main().then(console.info).catch(console.error);

@@ -1,8 +1,8 @@
-import Debug from 'debug';
 import redis from 'redis';
+import { LoggerFactory } from '@day1co/pebbles';
 import { FastLock } from './fast-lock';
 
-const debug = Debug('fastlock:test');
+const logger = LoggerFactory.getLogger('fastlock:test');
 const sleep = async (ms) => new Promise((res) => setTimeout(res, ms));
 const createLocker = () => {
   const redisConfig = { host: 'localhost', port: 6379, db: 0 };
@@ -45,16 +45,16 @@ describe('FastLock', () => {
           testArray.push('foo2');
           await locker2.unlock();
         };
-        debug('lock start');
+        logger.debug('lock start');
         testArray.push('bar');
         testArray.push('foo');
         setTimeout(() => testFunction(), 300);
         await locker.unlock();
         await sleep(1000);
         expect(testArray).toEqual(['bar', 'foo', 'bar2', 'foo2']);
-        debug('should work', testArray);
+        logger.debug('should work: %o', testArray);
       } catch (err) {
-        debug(err);
+        logger.error(`${err.message}, stack=${err.stack}`);
       }
     });
 
@@ -70,7 +70,7 @@ describe('FastLock', () => {
             testArray.push('foo2');
             await locker2.unlock();
           } catch (err) {
-            debug(err);
+            logger.error(`${err.message}, stack=${err.stack}`);
           }
         };
         testArray.push('bar');
@@ -79,9 +79,9 @@ describe('FastLock', () => {
         await sleep(3000);
         await locker.unlock();
       } catch (err) {
-        debug(err);
+        logger.error(`${err.message}, stack=${err.stack}`);
       } finally {
-        debug('locked', testArray);
+        logger.debug('locked: %o', testArray);
         expect(testArray).toEqual(['bar', 'foo']);
       }
     });
