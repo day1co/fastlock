@@ -54,7 +54,7 @@ describe('FastLock', () => {
         expect(testArray).toEqual(['bar', 'foo', 'bar2', 'foo2']);
         logger.debug('should work: %o', testArray);
       } catch (err) {
-        logger.error(`${err.message}, stack=${err.stack}`);
+        logger.error('%o', err);
       }
     });
 
@@ -70,7 +70,7 @@ describe('FastLock', () => {
             testArray.push('foo2');
             await locker2.unlock();
           } catch (err) {
-            logger.error(`${err.message}, stack=${err.stack}`);
+            logger.error('%o', err);
           }
         };
         testArray.push('bar');
@@ -79,7 +79,7 @@ describe('FastLock', () => {
         await sleep(3000);
         await locker.unlock();
       } catch (err) {
-        logger.error(`${err.message}, stack=${err.stack}`);
+        logger.error('%o', err);
       } finally {
         logger.debug('locked: %o', testArray);
         expect(testArray).toEqual(['bar', 'foo']);
