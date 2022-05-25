@@ -1,6 +1,6 @@
 {
   "name": "@day1co/fastlock",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "fast and simple distributed lock using redis",
   "url": "https://github.com/day1co/fastlock",
   "repository": {
