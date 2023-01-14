@@ -1,16 +1,9 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",
+  "extends": "@day1co/tsconfig/backend.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "allowJs": true,
-    "checkJs": true,
-    "newLine": "lf",
-    "declaration": true,
-    "noImplicitAny": false,
-    "moduleResolution": "node",
-    "sourceMap": true,
     "outDir": "lib"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["./lib", "node_modules", "**/*.spec.ts"]
 }
+
