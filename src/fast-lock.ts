@@ -15,7 +15,7 @@ export class FastLock {
     return new FastLock(opts);
   }
 
-  private client: any;
+  private readonly client: any;
   private redlock: Redlock;
   private locker: any;
 
@@ -44,7 +44,7 @@ export class FastLock {
       }
     );
     this.redlock.on('clientError', function (err: Error) {
-      logger.error('A redis error has occured: %o', err);
+      logger.error('A redis error has occurred: %o', err);
     });
   }
 
@@ -57,12 +57,12 @@ export class FastLock {
 
   public async lock(key: string, ttl = 2000): Promise<any> {
     logger.debug('lock: %o', key);
-    this.locker = await this.redlock.lock(key, ttl);
+    this.locker = await this.redlock.acquire([key], ttl);
     return this.locker;
   }
 
   public async unlock(): Promise<boolean> {
-    await this.locker.unlock();
+    await this.locker.release();
     return true;
   }
 }
