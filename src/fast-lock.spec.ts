@@ -35,6 +35,7 @@ describe('FastLock', () => {
     test('lock and unlock', async () => {
       try {
         await locker.lock(lockKey, 2000);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const test = 'test' + Math.random();
         const testArray: string[] = [];
         const testFunction = async () => {
@@ -60,6 +61,7 @@ describe('FastLock', () => {
       const testArray: string[] = [];
       try {
         await locker.lock(lockKey, 4000);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const test = 'test' + Math.random();
         const testFunction = async () => {
           try {
