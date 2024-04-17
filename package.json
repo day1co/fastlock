@@ -25,6 +25,10 @@
     "ci:test": "./ci_test.sh",
     "watch": "tsc -w"
   },
+  "peerDependencies": {
+    "@day1co/pebbles": "^3.2.0",
+    "redlock": "^5.0.0-beta.2"
+  },
   "devDependencies": {
     "@day1co/eslint-config": "^1.3.1",
     "@day1co/prettier-config": "^1.2.2",
@@ -47,10 +51,6 @@
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
-  },
-  "peerDependencies": {
-    "@day1co/pebbles": "^3.2.7",
-    "redlock": "^5.0.0-beta.2"
   },
   "bugs": {
     "url": "https://github.com/day1co/fastlock/issues"
